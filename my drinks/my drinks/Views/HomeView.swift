@@ -118,7 +118,6 @@ struct HomeView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showingNewLog) {
                 NewLogView(logs: $logs)
             }
