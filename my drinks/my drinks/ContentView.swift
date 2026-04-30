@@ -11,7 +11,7 @@ import Foundation
 struct ContentView: View {
     @State private var logs: [Log] = Log.dummyList
     
-    var body: some View {
+    var body: some View {        
         TabView {
             HomeView(logs: $logs)
                 .tabItem {
@@ -20,6 +20,10 @@ struct ContentView: View {
             ReportView(logs: logs)
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
+                }
+            ProfileView(logs: logs)
+                .tabItem {
+                    Image(systemName: "person.fill")
                 }
         }
         .tint(.brown)

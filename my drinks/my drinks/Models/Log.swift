@@ -68,7 +68,7 @@ extension Log {
         Log(name: "Pistachio Cloud Jasmine", time: Date.from(year: 2026, month: 3, day: 20), type: .boba, size: .medium, temperature: .iced, caffeine: 156, sugar: 20, price: 7.50, rating: 5, note: nil),
         Log(name: "Vanilla Latte", time: Date.from(year: 2026, month: 4, day: 20), type: .latte, size: .medium, temperature: .iced, caffeine: 75, sugar: 10, price: 6.00, rating: 3, note: nil),
         Log(name: "", time: Date.from(year: 2025, month: 12, day: 25), type: .espresso, size: .small, temperature: .hot, caffeine: 64, sugar: 0, price: nil, rating: nil, note: nil),
-        Log(name: "Matcha", time: Date.from(year: 2026, month: 4, day: 20), type: .other, size: .large, temperature: .iced, caffeine: 0, sugar: 5, price: 5.50, rating: 2, note: "Too sweet"),
+        Log(name: "Matcha", time: Date.from(year: 2026, month: 4, day: 20), type: .matcha, size: .large, temperature: .iced, caffeine: 0, sugar: 5, price: 5.50, rating: 2, note: "Too sweet"),
         Log(name: "Cappuccino", time: Date.from(year: 2026, month: 4, day: 21), type: .cappuccino, size: .medium, temperature: .hot, caffeine: 75, sugar: 0, price: 4.50, rating: 4, note: nil),
         Log(name: "Cappuccino", time: Date.from(year: 2026, month: 4, day: 22), type: .cappuccino, size: .medium, temperature: .hot, caffeine: 75, sugar: 0, price: 4.50, rating: 4, note: nil)
     ]

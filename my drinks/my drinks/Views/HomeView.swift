@@ -44,10 +44,8 @@ struct HomeView: View {
     }
     
     var thisMonthLogs: [Log] {
-        let calendar = Calendar.current
-        let now = Date()
         return logs.filter {
-            calendar.isDate($0.time, equalTo: now, toGranularity: .month)
+            Calendar.current.isDate($0.time, equalTo: selectedMonth, toGranularity: .month)
         }
     }
     
