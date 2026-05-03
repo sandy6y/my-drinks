@@ -9,27 +9,27 @@ import SwiftUI
 import Foundation
 
 struct ContentView: View {
-    @State private var logs: [Log] = Log.dummyList
-    // @StateObject private var viewModel = LogViewModel()
+    @StateObject var viewModel = LogViewModel()
 
     var body: some View {
         TabView {
-            HomeView(logs: $logs)
+            HomeView(viewModel: viewModel)
                 .tabItem {
                     Image(systemName: "cup.and.saucer.fill")
                 }
-            ReportView(logs: logs)
+            ReportView(logs: viewModel.logs)
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
                 }
-            ProfileView(logs: logs)
+            ProfileView(logs: viewModel.logs)
                 .tabItem {
                     Image(systemName: "person.fill")
                 }
         }
         .tint(.brown)
-        // .task {
-        //      await viewModel.fetchLogs()
+        .task {
+            await viewModel.fetchLogs()
+        }
     }
 }
 

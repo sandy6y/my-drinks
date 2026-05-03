@@ -9,8 +9,8 @@ import SwiftUI
 
 struct NewLogView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var logs: [Log]
-    
+    @ObservedObject var viewModel: LogViewModel
+
     @State private var name: String = ""
     @State private var time: Date = Date()
     @State private var selectedType: DrinkType = .espresso
@@ -65,7 +65,7 @@ struct NewLogView: View {
                     
                     // MARK: Temperature
                     VStack(alignment: .leading, spacing: 12) {
-                        sectionLabel("Tempearature")
+                        sectionLabel("Temperature")
                         HStack(spacing: 8) {
                             selectableButton(label: "🧊 Iced", isSelected: selectedTemp == .iced) {
                                 selectedTemp = .iced
@@ -221,17 +221,10 @@ struct NewLogView: View {
             rating: rating == 0 ? nil : rating,
             note: note.isEmpty ? nil : note
         )
-        logs.append(log)
-        /*
-         Task {
-            if let existing = existingLog {
-                await viewModel.updateLog(log)
-            } else {
+        Task {
             await viewModel.createLog(log)
-            }
-         }
-         */
-        dismiss()
+            dismiss()
+        }
     }
 
     // MARK: - Heart Rating
@@ -251,5 +244,5 @@ struct NewLogView: View {
 }
 
 #Preview {
-    NewLogView(logs: .constant([]))
+    NewLogView(viewModel: LogViewModel())
 }

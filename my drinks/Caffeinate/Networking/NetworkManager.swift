@@ -36,16 +36,17 @@ final class NetworkManager {
 
     private init() {}
 
-    private let drinksBaseURL = "https://api.mydrinks.example.com/v1"
+    private let drinksBaseURL = "https://caffeinate-backend.onrender.com"
 
     func fetchLogs() async throws -> [Log] {
-        guard let url = URL(string: "\(drinksBaseURL)/logs") else { throw NetworkError.invalidURL }
+        guard let url = URL(string: "\(drinksBaseURL)/v1/logs") else { throw NetworkError.invalidURL }
 
         let (data, response) = try await URLSession.shared.data(from: url)
         try validateDrinks(response: response)
 
         do {
             let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
             return try decoder.decode([Log].self, from: data)
         } catch {
             throw NetworkError.decodingFailed(error)
@@ -53,12 +54,14 @@ final class NetworkManager {
     }
 
     func createLog(_ log: Log) async throws -> Log {
-        guard let url = URL(string: "\(drinksBaseURL)/logs") else { throw NetworkError.invalidURL }
+        guard let url = URL(string: "\(drinksBaseURL)/v1/logs") else { throw NetworkError.invalidURL }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+       
         let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         guard let body = try? encoder.encode(log) else { throw NetworkError.encodingFailed }
         request.httpBody = body
 
@@ -75,7 +78,7 @@ final class NetworkManager {
     }
 
     func deleteLog(id: UUID) async throws {
-        guard let url = URL(string: "\(drinksBaseURL)/logs") else { throw NetworkError.invalidURL }
+        guard let url = URL(string: "\(drinksBaseURL)/v1/logs/\(id.uuidString)") else { throw NetworkError.invalidURL }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"

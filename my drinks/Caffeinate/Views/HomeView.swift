@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @Binding var logs: [Log]
-    // @ObservedObject var viewModel: LogViewModel
+    @StateObject var viewModel: LogViewModel
     @State private var showingNewLog = false
     @State private var selectedMonth: Date = Date()
     
@@ -39,13 +38,13 @@ struct HomeView: View {
     // MARK: Computation
     var todayCaffeine: Int {
         let today = Calendar.current.startOfDay(for: Date())
-        return logs
-            .filter {Calendar.current.startOfDay(for: $0.time) == today}
-            .reduce(0) {$0 + $1.caffeine}
+        return viewModel.logs
+            .filter { Calendar.current.startOfDay(for: $0.time) == today }
+            .reduce(0) { $0 + $1.caffeine }
     }
     
     var thisMonthLogs: [Log] {
-        return logs.filter {
+        return viewModel.logs.filter {
             Calendar.current.isDate($0.time, equalTo: selectedMonth, toGranularity: .month)
         }
     }
@@ -56,8 +55,8 @@ struct HomeView: View {
             calendar.startOfDay(for: $0.time)
         }
         return grouped
-            .map {(date: $0.key, logs: $0.value)}
-            .sorted{$0.date > $1.date}
+            .map { (date: $0.key, logs: $0.value) }
+            .sorted { $0.date > $1.date }
     }
     
     var body: some View {
@@ -66,11 +65,8 @@ struct HomeView: View {
                 VStack(alignment: .center, spacing: 20) {
                     
                     // MARK: Month Navigator
-                    
                     HStack {
-                        Button {
-                            goBack()
-                        } label: {
+                        Button { goBack() } label: {
                             Image(systemName: "chevron.left")
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brown)
@@ -87,9 +83,7 @@ struct HomeView: View {
                         
                         Spacer()
                         
-                        Button {
-                            goForward()
-                        } label: {
+                        Button { goForward() } label: {
                             Image(systemName: "chevron.right")
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.brown)
@@ -100,9 +94,8 @@ struct HomeView: View {
                         .disabled(isCurrentMonth)
                     }
                     .padding(.horizontal)
-
+                    
                     // MARK: Caffeine Summary Card
-                    // only show today's caffeine with logs of current month
                     VStack(alignment: .center, spacing: 10) {
                         Text("Today's Caffeine")
                             .font(.system(size: 40))
@@ -122,8 +115,20 @@ struct HomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
                     .padding(.horizontal)
-
-                        
+                    
+                    // MARK: Loading / Error
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .padding()
+                    }
+                    
+                    if let error = viewModel.errorMessage {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .padding(.horizontal)
+                    }
+                    
                     // MARK: Add Button
                     Button {
                         showingNewLog = true
@@ -138,12 +143,11 @@ struct HomeView: View {
                         .foregroundColor(.white)
                         .background(.brown)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-
                     }
                     .padding(.horizontal)
                     
                     // MARK: Logs grouped by day
-                    if logsByDay.isEmpty {
+                    if logsByDay.isEmpty && !viewModel.isLoading {
                         VStack(alignment: .center, spacing: 8) {
                             Text("☕")
                                 .font(.system(size: 48))
@@ -154,14 +158,14 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, 40)
                     } else {
-                        ForEach(logsByDay, id: \.date) {group in
+                        ForEach(logsByDay, id: \.date) { group in
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(group.date.formatted(.dateTime.month(.wide).day()))
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                     .padding(.horizontal)
                                 
-                                ForEach(group.logs) {log in
+                                ForEach(group.logs) { log in
                                     LogCell(log: log)
                                         .padding(.horizontal)
                                 }
@@ -172,13 +176,16 @@ struct HomeView: View {
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
+            .task {
+                await viewModel.fetchLogs()
+            }
             .sheet(isPresented: $showingNewLog) {
-                NewLogView(logs: $logs)
+                NewLogView(viewModel: viewModel)
             }
         }
     }
 }
 
 #Preview {
-    HomeView(logs: .constant(Log.dummyList))
+    HomeView(viewModel: LogViewModel())
 }

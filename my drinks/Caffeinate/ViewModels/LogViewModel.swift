@@ -14,6 +14,11 @@ class LogViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     
+    // MARK: Load
+    func loadLogs() async {
+        await fetchLogs()
+    }
+    
     // MARK: Fetch
     func fetchLogs() async {
         isLoading = true
