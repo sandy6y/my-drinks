@@ -20,6 +20,25 @@ uvicorn app.main:app --reload
 
 Server starts at `http://127.0.0.1:8000`.
 
+## Deploy to Render
+
+Create a new **Web Service** in Render and point it at this repository.
+
+Recommended settings:
+
+- **Root Directory**: `backend`
+- **Runtime**: Python 3
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+Render provides the `PORT` environment variable automatically. The backend creates its SQLite database at `backend/data/caffeinate.db` on startup when running locally or on the service filesystem.
+
+For a production app, consider using a managed database instead of Render's ephemeral service filesystem. The local SQLite database and virtual environment are ignored by git and should not be deployed.
+
+### CORS
+
+CORS is enabled for local/browser testing. Native iOS apps are not restricted by browser CORS, but the API also accepts browser requests from local development clients.
+
 ## API Endpoints
 
 ### 1) Health

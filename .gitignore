@@ -2,8 +2,18 @@
 # Python backend
 __pycache__/
 *.pyc
+.venv/
+venv/
+env/
 backend/.venv/
+backend/data/
 backend/data/*.db
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
+!.env.example
 
 # macOS
 .DS_Store
